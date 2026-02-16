@@ -7,6 +7,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
+import { Switch } from "@/components/ui/switch"
 
 const Navbar = () => {
   return (
@@ -19,7 +20,7 @@ const Navbar = () => {
         </div>
 
         {/* desktop menu */}
-        <NavigationMenu>
+        <NavigationMenu className="hidden lg:flex">
           <NavigationMenuList>
 
             {/* Normal link */}
@@ -30,7 +31,7 @@ const Navbar = () => {
             </NavigationMenuItem>
 
             {/* Dropdown */}
-            <NavigationMenuItem>
+            <NavigationMenuItem >
               <NavigationMenuTrigger>Services</NavigationMenuTrigger>
               <NavigationMenuContent className="flex flex-col p-4 space-y-2">
                 <NavigationMenuLink asChild>
@@ -45,8 +46,31 @@ const Navbar = () => {
               </NavigationMenuContent>
             </NavigationMenuItem>
 
+            {/* Normal link about */}
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link href="/news">About</Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+            {/* Normal link contact */}
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link href="/news">Contact</Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+
           </NavigationMenuList>
         </NavigationMenu>
+
+        {/* Color whitcher and login button */}
+        <div>
+            <div>
+                <span>Dark Mode</span>
+                <Switch />
+            </div>
+        </div>
 
       </nav>
     </header>
