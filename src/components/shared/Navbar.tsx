@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { Search } from "lucide-react"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -9,57 +10,107 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
-import { Switch } from "@/components/ui/switch"
+import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/shared/ThemeToggle"
+import { MobileMenu } from "@/components/shared/MobileMenu"
+
+const categories = [
+  {
+    name: "General",
+    slug: "general",
+    description: "Top headlines and breaking stories from around the world.",
+  },
+  {
+    name: "Business",
+    slug: "business",
+    description: "Markets, finance, economy, and corporate news.",
+  },
+  {
+    name: "Technology",
+    slug: "technology",
+    description: "Latest in tech, startups, gadgets, and innovation.",
+  },
+  {
+    name: "Sports",
+    slug: "sports",
+    description: "Scores, highlights, and stories from the sports world.",
+  },
+  {
+    name: "Entertainment",
+    slug: "entertainment",
+    description: "Movies, music, celebrities, and pop culture.",
+  },
+  {
+    name: "Health",
+    slug: "health",
+    description: "Wellness, medicine, fitness, and health research.",
+  },
+  {
+    name: "Science",
+    slug: "science",
+    description: "Discoveries, space, environment, and scientific research.",
+  },
+]
 
 const Navbar = () => {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-md dark:bg-slate-900/80 dark:border-slate-800">
-      <nav className="max-w-7xl mx-auto flex h-16 items-center justify-between px-6 lg:px-8">
-
-        {/* Logo */}
-        <div className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-          <Link href="/" className="hover:text-blue-600 transition-colors">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
+      <nav className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Left: Mobile Menu + Logo */}
+        <div className="flex items-center gap-2">
+          <MobileMenu />
+          <Link
+            href="/"
+            className="text-xl sm:text-2xl font-bold tracking-tight hover:text-primary/80 transition-colors"
+          >
             Daily News
           </Link>
         </div>
 
-        {/* Desktop Menu */}
+        {/* Center: Desktop Menu */}
         <NavigationMenu className="hidden lg:flex">
           <NavigationMenuList>
-
-            {/* News */}
+            {/* Home */}
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
                 <Link
-                  href="/news"
-                  className="text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors dark:text-slate-300"
+                  href="/"
+                  className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                 >
-                  News
+                  Home
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
 
-
-            {/* Services */}
+            {/* Latest News */}
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Services</NavigationMenuTrigger>
+              <NavigationMenuLink asChild>
+                <Link
+                  href="/news"
+                  className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                >
+                  Latest News
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+            {/* Categories Dropdown */}
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
               <NavigationMenuContent>
-                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                  {[
-                    { title: "Web Development", href: "/services/web-development", description: "Build modern, responsive websites and web applications." },
-                    { title: "Mobile Apps", href: "/services/mobile-apps", description: "Create native and cross-platform mobile experiences." },
-                    { title: "SEO Optimization", href: "/services/seo", description: "Improve your search engine rankings and visibility." },
-                    { title: "Cloud Services", href: "/services/cloud", description: "Scalable cloud solutions for your business needs." }
-                  ].map((item) => (
-                    <li key={item.title}>
+                <ul className="grid w-[400px] gap-2 p-4 md:w-[500px] md:grid-cols-2">
+                  {categories.map((cat) => (
+                    <li key={cat.slug}>
                       <NavigationMenuLink asChild>
                         <Link
-                          href={item.href}
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 hover:text-slate-900 focus:bg-slate-100 focus:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50 dark:focus:bg-slate-800 dark:focus:text-slate-50"
+                          href={`/category/${cat.slug}`}
+                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                         >
-                          <div className="text-sm font-medium leading-none">{item.title}</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-slate-500 dark:text-slate-400">
-                            {item.description}
+                          <div className="text-sm font-medium leading-none">
+                            {cat.name}
+                          </div>
+                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                            {cat.description}
                           </p>
                         </Link>
                       </NavigationMenuLink>
@@ -74,24 +125,25 @@ const Navbar = () => {
               <NavigationMenuLink asChild>
                 <Link
                   href="/contact"
-                  className="text-sm font-medium text-slate-700 hover:text-blue-600 transition-colors dark:text-slate-300"
+                  className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                 >
                   Contact
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
-
           </NavigationMenuList>
         </NavigationMenu>
 
-        {/* Right Side - Dark Mode */}
-        <div className="flex items-center space-x-3">
-          <span className="text-sm text-slate-600 dark:text-slate-300">
-            Dark Mode
-          </span>
-          <Switch />
+        {/* Right: Search + Theme Toggle */}
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" className="h-9 w-9" asChild>
+            <Link href="/search">
+              <Search className="h-4 w-4" />
+              <span className="sr-only">Search</span>
+            </Link>
+          </Button>
+          <ThemeToggle />
         </div>
-
       </nav>
     </header>
   )
