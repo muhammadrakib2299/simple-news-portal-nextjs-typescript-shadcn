@@ -68,12 +68,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         {/* Category + Meta */}
         <div className="flex flex-wrap items-center gap-3 mb-4">
           <CategoryBadge category={article.category} />
-          <span className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Clock className="h-3.5 w-3.5" />
+          <time
+            dateTime={article.publishedAt}
+            className="flex items-center gap-1 text-sm text-muted-foreground"
+          >
+            <Clock className="h-3.5 w-3.5" aria-hidden="true" />
             {formatDate(article.publishedAt)}
-          </span>
+          </time>
           <span className="flex items-center gap-1 text-sm text-muted-foreground">
-            <User className="h-3.5 w-3.5" />
+            <User className="h-3.5 w-3.5" aria-hidden="true" />
             {article.author}
           </span>
         </div>

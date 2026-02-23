@@ -45,13 +45,16 @@ export function NewsCard({ article }: NewsCardProps) {
           </p>
           <div className="flex items-center gap-3 text-xs text-muted-foreground mt-auto pt-2">
             <span className="flex items-center gap-1">
-              <User className="h-3 w-3" />
+              <User className="h-3 w-3" aria-hidden="true" />
               {article.author}
             </span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
+            <time
+              dateTime={article.publishedAt}
+              className="flex items-center gap-1"
+            >
+              <Clock className="h-3 w-3" aria-hidden="true" />
               {formatDate(article.publishedAt)}
-            </span>
+            </time>
           </div>
         </CardContent>
       </Card>

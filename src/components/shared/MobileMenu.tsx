@@ -42,7 +42,7 @@ export function MobileMenu() {
             Daily News
           </SheetTitle>
         </SheetHeader>
-        <nav className="flex flex-col gap-1 mt-6">
+        <nav aria-label="Mobile navigation" className="flex flex-col gap-1 mt-6">
           <Link
             href="/"
             onClick={closeMenu}
