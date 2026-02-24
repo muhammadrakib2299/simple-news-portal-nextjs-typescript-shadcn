@@ -3,7 +3,9 @@ import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { compareSync } from "bcryptjs"
 import { prisma } from "@/lib/prisma"
-import type { Role } from "@/generated/prisma/enums"
+import { authConfig } from "@/lib/auth.config"
+
+type Role = "ADMIN" | "EDITOR" | "AUTHOR"
 
 declare module "next-auth" {
   interface Session {
@@ -21,20 +23,10 @@ declare module "next-auth" {
   }
 }
 
-declare module "@auth/core/jwt" {
-  interface JWT {
-    id: string
-    role: Role
-  }
-}
-
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  adapter: PrismaAdapter(prisma as any),
+  ...authConfig,
+  adapter: PrismaAdapter(prisma as never) as never,
   session: { strategy: "jwt" },
-  pages: {
-    signIn: "/admin/login",
-  },
   providers: [
     Credentials({
       name: "credentials",
@@ -67,36 +59,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    ...authConfig.callbacks,
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id!
-        token.role = user.role
+        token.id = user.id as string
+        token.role = (user as { role: Role }).role
       }
       return token
     },
     async session({ session, token }) {
-      session.user.id = token.id
-      session.user.role = token.role
+      session.user.id = token.id as string
+      session.user.role = token.role as Role
       return session
-    },
-    async authorized({ auth, request }) {
-      const isLoggedIn = !!auth?.user
-      const { pathname } = request.nextUrl
-
-      // Protect all admin routes except login
-      if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
-        if (!isLoggedIn) {
-          return Response.redirect(new URL("/admin/login", request.nextUrl))
-        }
-        return true
-      }
-
-      // Redirect logged-in users away from login page
-      if (pathname === "/admin/login" && isLoggedIn) {
-        return Response.redirect(new URL("/admin", request.nextUrl))
-      }
-
-      return true
     },
   },
 })

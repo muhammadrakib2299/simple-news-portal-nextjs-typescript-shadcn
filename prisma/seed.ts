@@ -1,4 +1,5 @@
-import { PrismaClient, CategorySlug } from "../src/generated/prisma"
+import { PrismaClient } from "../src/generated/prisma/client"
+import { CategorySlug } from "../src/generated/prisma/enums"
 import { hashSync } from "bcryptjs"
 
 const prisma = new PrismaClient()
