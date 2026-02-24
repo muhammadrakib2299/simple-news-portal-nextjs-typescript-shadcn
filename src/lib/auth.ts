@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { compareSync } from "bcryptjs"
 import { prisma } from "@/lib/prisma"
-import type { Role } from "@/generated/prisma"
+import type { Role } from "@/generated/prisma/enums"
 
 declare module "next-auth" {
   interface Session {
@@ -21,7 +21,7 @@ declare module "next-auth" {
   }
 }
 
-declare module "next-auth/jwt" {
+declare module "@auth/core/jwt" {
   interface JWT {
     id: string
     role: Role

@@ -5,6 +5,7 @@ import { Send, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { submitContactMessage } from "@/lib/actions"
 
 interface FormData {
   name: string
@@ -69,10 +70,14 @@ export function ContactForm() {
     }
 
     setLoading(true)
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const result = await submitContactMessage(form)
     setLoading(false)
-    setSubmitted(true)
+
+    if (result.success) {
+      setSubmitted(true)
+    } else {
+      setErrors({ message: result.error ?? "Something went wrong." })
+    }
   }
 
   if (submitted) {
