@@ -29,7 +29,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const page = Math.max(1, Number(params.page) || 1)
 
   const { articles, totalResults } = query
-    ? searchNews(query, page, PAGE_SIZE)
+    ? await searchNews(query, page, PAGE_SIZE)
     : { articles: [], totalResults: 0 }
 
   const totalPages = Math.ceil(totalResults / PAGE_SIZE)

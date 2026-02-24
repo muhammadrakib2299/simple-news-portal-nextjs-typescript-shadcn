@@ -1,19 +1,17 @@
 import type { MetadataRoute } from "next"
-import { mockArticles } from "@/lib/mock-data"
+import { prisma } from "@/lib/prisma"
 
 const BASE_URL = "https://dailynews.com"
 
-const categories = [
-  "general",
-  "business",
-  "technology",
-  "sports",
-  "entertainment",
-  "health",
-  "science",
-]
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [articles, categories] = await Promise.all([
+    prisma.article.findMany({
+      where: { status: "PUBLISHED" },
+      select: { slug: true, publishedAt: true },
+    }),
+    prisma.category.findMany({ select: { slug: true } }),
+  ])
 
-export default function sitemap(): MetadataRoute.Sitemap {
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE_URL, lastModified: new Date(), changeFrequency: "hourly", priority: 1.0 },
@@ -24,16 +22,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Category pages
   const categoryPages: MetadataRoute.Sitemap = categories.map((cat) => ({
-    url: `${BASE_URL}/category/${cat}`,
+    url: `${BASE_URL}/category/${cat.slug}`,
     lastModified: new Date(),
     changeFrequency: "daily" as const,
     priority: 0.7,
   }))
 
   // Article pages
-  const articlePages: MetadataRoute.Sitemap = mockArticles.map((article) => ({
+  const articlePages: MetadataRoute.Sitemap = articles.map((article) => ({
     url: `${BASE_URL}/news/${article.slug}`,
-    lastModified: new Date(article.publishedAt),
+    lastModified: article.publishedAt ?? new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.8,
   }))

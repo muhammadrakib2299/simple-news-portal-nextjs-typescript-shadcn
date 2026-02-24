@@ -10,11 +10,13 @@ import {
   getCategories,
 } from "@/lib/api"
 
-export default function Home() {
-  const featured = getFeaturedArticle()
-  const latest = getLatestNews(6)
-  const trending = getTrendingNews(5)
-  const categories = getCategories()
+export default async function Home() {
+  const [featured, latest, trending, categories] = await Promise.all([
+    getFeaturedArticle(),
+    getLatestNews(6),
+    getTrendingNews(5),
+    getCategories(),
+  ])
 
   return (
     <div className="py-6 space-y-12">

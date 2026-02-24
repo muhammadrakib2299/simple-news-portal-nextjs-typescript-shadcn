@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Auth Models (NextAuth Prisma Adapter) ───
+
+enum Role {
+  ADMIN
+  EDITOR
+  AUTHOR
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  role          Role      @default(AUTHOR)
+  bio           String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+  articles Article[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Content Models ───
+
+enum CategorySlug {
+  general
+  business
+  technology
+  sports
+  entertainment
+  health
+  science
+}
+
+model Category {
+  id          String       @id @default(cuid())
+  name        String
+  slug        CategorySlug @unique
+  description String
+  color       String
+
+  articles Article[]
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Article {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  title       String
+  description String
+  content     String        @db.Text
+  imageUrl    String
+  source      String
+  status      ArticleStatus @default(DRAFT)
+  isFeatured  Boolean       @default(false)
+  isTrending  Boolean       @default(false)
+  views       Int           @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  authorId   String
+  author     User     @relation(fields: [authorId], references: [id])
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  tags ArticleTag[]
+
+  @@index([categoryId])
+  @@index([status, publishedAt])
+  @@index([isFeatured])
+  @@index([isTrending])
+}
+
+// ─── Tag (future use) ───
+
+model Tag {
+  id   String @id @default(cuid())
+  name String @unique
+  slug String @unique
+
+  articles ArticleTag[]
+}
+
+model ArticleTag {
+  articleId String
+  tagId     String
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+}
+
+// ─── Subscriber ───
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+// ─── Contact Messages ───
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String   @db.Text
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// ─── Site Settings (singleton) ───
+
+model SiteSettings {
+  id      String @id @default("default")
+  siteName String @default("Daily News")
+  tagline  String @default("Your Trusted News Source")
+  seoDescription String @default("Stay informed with the latest breaking news.")
+  contactEmail   String @default("contact@dailynews.com")
+  updatedAt DateTime @updatedAt
+}

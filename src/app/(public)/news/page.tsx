@@ -34,7 +34,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
     : undefined
   const page = Math.max(1, Number(params.page) || 1)
 
-  const { articles, totalResults } = getTopHeadlines(category, page, PAGE_SIZE)
+  const { articles, totalResults } = await getTopHeadlines(category, page, PAGE_SIZE)
   const totalPages = Math.ceil(totalResults / PAGE_SIZE)
 
   // Build search params for pagination links

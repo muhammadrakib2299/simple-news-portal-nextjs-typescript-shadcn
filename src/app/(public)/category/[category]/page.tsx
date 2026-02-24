@@ -28,7 +28,7 @@ export async function generateMetadata({
   params,
 }: CategoryPageProps): Promise<Metadata> {
   const { category } = await params
-  const categories = getCategories()
+  const categories = await getCategories()
   const cat = categories.find((c) => c.slug === category)
 
   if (!cat) return { title: "Category Not Found" }
@@ -50,11 +50,11 @@ export default async function CategoryPage({
     notFound()
   }
 
-  const categories = getCategories()
+  const categories = await getCategories()
   const catInfo = categories.find((c) => c.slug === category)!
   const page = Math.max(1, Number(sp.page) || 1)
 
-  const { articles, totalResults } = getNewsByCategory(
+  const { articles, totalResults } = await getNewsByCategory(
     category as Category,
     page,
     PAGE_SIZE

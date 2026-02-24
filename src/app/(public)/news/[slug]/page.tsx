@@ -27,7 +27,7 @@ export async function generateMetadata({
   params,
 }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params
-  const article = getArticleBySlug(slug)
+  const article = await getArticleBySlug(slug)
 
   if (!article) {
     return { title: "Article Not Found" }
@@ -46,13 +46,13 @@ export async function generateMetadata({
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params
-  const article = getArticleBySlug(slug)
+  const article = await getArticleBySlug(slug)
 
   if (!article) {
     notFound()
   }
 
-  const relatedArticles = getRelatedArticles(slug, 3)
+  const relatedArticles = await getRelatedArticles(slug, 3)
 
   return (
     <article className="py-8">
