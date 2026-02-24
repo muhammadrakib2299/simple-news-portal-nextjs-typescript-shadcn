@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { HeroSection } from "@/components/home/HeroSection"
 import { LatestNewsSection } from "@/components/home/LatestNewsSection"
 import { CategorySection } from "@/components/home/CategorySection"

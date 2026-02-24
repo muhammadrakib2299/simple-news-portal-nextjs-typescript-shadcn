@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { FileText, Users, Mail, MessageSquare } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { prisma } from "@/lib/prisma"
